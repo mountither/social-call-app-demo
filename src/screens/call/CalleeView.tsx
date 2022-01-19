@@ -11,8 +11,8 @@ import ScreenContainer from '../../components/layouts/ScreenContainer';
 import { functions } from '../../navigation';
 import auth from '@react-native-firebase/auth';
 import { RTCConfig } from './CallerView';
-import { useDispatch } from 'react-redux';
-import { endCall, setPeerDetails, startCall } from '../../redux/slices/TopicCallSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { endCall, setPeerDetails, startCall, TopicCallState, getMuteState, getSpeakerState, getCallState, getCallSessionID } from '../../redux/slices/TopicCallSlice';
 import { useRTCStream } from '../../providers/RTCStreamProvider';
 
 const CalleeView = () => {
@@ -22,22 +22,27 @@ const CalleeView = () => {
 
     const dispatch = useDispatch();
 
-    const { 
-        isLocalTrackMuted,
-        isLocalSpeaker,
-        callSessionID,
-        callInProgress,
+    const state = useSelector((state: TopicCallState) => state);
+
+    const activeCall = getCallState(state);
+
+    const isMuted = getMuteState(state);
+    const isSpeaker = getSpeakerState(state)
+
+    const callSessionID = getCallSessionID(state);
+
+    const {
         handleAnswer,
         handleEnd,
         handleLocalMute,
-        handleLocalSpeaker} = useRTCStream()
-    
+        handleLocalSpeaker } = useRTCStream()
+
     const processAnswerCall = async () => {
         console.log("PROCESSING ANSWER CALLL")
 
-        if(callInProgress) return;
+        if (activeCall) return;
 
-        if(!callSessionID) return;
+        if (!callSessionID) return;
         await handleAnswer(callSessionID);
         await firestore().collection("users_call_state").doc(auth().currentUser?.uid).set({
             call_in_progress: true
@@ -58,12 +63,13 @@ const CalleeView = () => {
 
     return (
         <View style={tw`flex-1 items-center justify-center`}>
-        <ActiveCallView
-            handleEnd={handleEnd}
-            handleLocalMute={handleLocalMute}
-            handleLocalSpeaker={handleLocalSpeaker}
-            isLocalSpeaker={isLocalSpeaker}
-            isLocalTrackMuted={isLocalTrackMuted} />
+            <ActiveCallView
+                handleEnd={handleEnd}
+                handleLocalMute={handleLocalMute}
+                handleLocalSpeaker={handleLocalSpeaker}
+                isLocalSpeaker={isSpeaker}
+                isLocalTrackMuted={isMuted}
+            />
         </View>
 
     )

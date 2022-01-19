@@ -6,7 +6,7 @@ import { mediaDevices, RTCOfferOptions, RTCSessionDescription, RTCIceCandidate, 
 import InCallManager from 'react-native-incall-manager';
 import auth from '@react-native-firebase/auth';
 import { useDispatch, useSelector } from 'react-redux';
-import { endCall, startCall, TopicCallState, getPeerUID } from '../redux/slices/TopicCallSlice';
+import { endCall, startCall, TopicCallState, getPeerUID, setMute, setSpeaker, getSpeakerState, setIsCallAnswered, setUserCallRole, getUserCallRole, setCallSessionID, getCallSessionID, getTopicID } from '../redux/slices/TopicCallSlice';
 
 
 // TODO - add call request amount in a seperate document that can be read effeciently.
@@ -26,31 +26,14 @@ export const RTCConfig: RTCPeerConnectionConfiguration = {
     iceCandidatePoolSize: 2
 }
 
+//! handlers are declared in this context. Other states at redux store
 export const RTCStreamContext = createContext<{
-    isLocalTrackMuted: boolean,
-    isLocalSpeaker: boolean,
-    isCallAnswered: boolean,
-    callInProgress: boolean,
-    userCallRole: "caller" | "callee" | undefined,
-    callSessionID: string | undefined,
-    topicID: string | undefined,
-    setCallSessionID: React.Dispatch<React.SetStateAction<string | undefined>>,
-    setTopicID: React.Dispatch<React.SetStateAction<string | undefined>>,
     handleCall: (() => Promise<string | undefined>),
     handleAnswer: (sessionID: string) => Promise<void>,
     handleEnd: () => void,
     handleLocalMute: () => void,
     handleLocalSpeaker: () => void
 }>({
-    isLocalTrackMuted: false,
-    isLocalSpeaker: false,
-    isCallAnswered: false,
-    callInProgress: false,
-    userCallRole: undefined,
-    callSessionID: undefined,
-    topicID: undefined,
-    setCallSessionID: () => undefined,
-    setTopicID: () => undefined,
     handleCall: () => new Promise(() => undefined),
     handleAnswer: () => new Promise(() => { }),
     handleEnd: () => { },
@@ -60,37 +43,24 @@ export const RTCStreamContext = createContext<{
 
 export const useRTCStream = () => useContext(RTCStreamContext);
 
-
 const RTCStreamProvider = ({ children }: { children: ReactNode }) => {
 
-    const [localStream, setLocalStream] = useState<MediaStream | undefined>(undefined)
+    const [localStream, setLocalStream] = useState<MediaStream | undefined>(undefined);
+
     const navigation = useNavigation();
 
     const dispatch = useDispatch();
+
     const state = useSelector((state: TopicCallState) => state)
 
     const peerUID = getPeerUID(state);
-
-    //! transfer to redux store
-    const [isLocalTrackMuted, setIsLocalTrackMuted] = useState<boolean>(false);
-    const [isLocalSpeaker, setIsLocalSpeaker] = useState<boolean>(false);
-
-    const [callSessionID, setCallSessionID] = useState<string | undefined>(undefined)
-    const [topicID, setTopicID] = useState<string | undefined>(undefined)
-
-    const [callInProgress, setCallInProgress] = useState<boolean>(false);
-
-    const [userCallRole, setUserCallRole] = useState<"caller" | "callee" | undefined>(undefined)
-
-
-    const [isCallAnswered, setIsCallAnswered] = useState<boolean>(false);
-
+    const isSpeaker = getSpeakerState(state);
+    const userCallRole = getUserCallRole(state)
+    const callSessionID = getCallSessionID(state)
+    const topicID = getTopicID(state)
 
     const pcConn = useRef<RTCPeerConnection>();
 
-
-
-    console.log(localStream, isLocalSpeaker, isCallAnswered, callInProgress, callSessionID)
     const initCallConfig = async () => {
         try {
             console.log("Initialising audio call config")
@@ -119,7 +89,6 @@ const RTCStreamProvider = ({ children }: { children: ReactNode }) => {
         try {
             console.log("Starting a new call")
 
-            setCallInProgress(true);
 
             await initCallConfig();
 
@@ -153,13 +122,15 @@ const RTCStreamProvider = ({ children }: { children: ReactNode }) => {
                 };
 
                 await callDoc.set({ offer });
-                setUserCallRole("caller")
+                dispatch(setUserCallRole({userCallRole: "caller"}))
                 //* listener for remote answer
                 callDoc.onSnapshot((snapshot) => {
                     const data = snapshot.data();
                     console.log("Activity @ Caller - Listening to call data")
                     if (!pcConn.current?.remoteDescription && data?.answer) {
-                        setIsCallAnswered(true);
+
+                        dispatch(setIsCallAnswered({isCallAnswered: true}));
+
                         console.log("Activity @ Caller - Found an answer to offer")
                         InCallManager.start({ media: 'audio' });
                         // RNCallKeep.startCall("dsgadsg", "44444", 'monti2');
@@ -189,7 +160,7 @@ const RTCStreamProvider = ({ children }: { children: ReactNode }) => {
                     });
                 });
 
-                setCallSessionID(callDoc.id)
+                dispatch(setCallSessionID({callSessionID: callDoc.id}))
                 dispatch(startCall())
 
             }
@@ -210,7 +181,6 @@ const RTCStreamProvider = ({ children }: { children: ReactNode }) => {
 
             console.log("Processing answer to a call")
 
-            setCallInProgress(true);
 
             const callDoc = firestore().collection('calls').doc(sessionID);
             const offerCandidates = callDoc.collection('caller');
@@ -258,7 +228,8 @@ const RTCStreamProvider = ({ children }: { children: ReactNode }) => {
                     };
 
                     await callDoc.update({ answer });
-                    setUserCallRole("callee")
+                    dispatch(setUserCallRole({userCallRole: "callee"}))
+
 
                     //* listen for any offer changes in collection
                     offerCandidates.onSnapshot((snapshot) => {
@@ -294,10 +265,6 @@ const RTCStreamProvider = ({ children }: { children: ReactNode }) => {
         console.log("- - Stream clean up")
 
         if (pcConn.current) {
-
-            setCallSessionID(undefined);
-            setCallInProgress(false);
-            setIsCallAnswered(false);
 
             pcConn.current.close();
 
@@ -368,8 +335,6 @@ const RTCStreamProvider = ({ children }: { children: ReactNode }) => {
 
             dispatch(endCall());
 
-            setUserCallRole(undefined)
-
             navigation.canGoBack() ? navigation.goBack() : navigation.navigate("Home" as never)
             // RNCallKeep.endCall("dsgadsg");
         } catch (error) {
@@ -383,7 +348,8 @@ const RTCStreamProvider = ({ children }: { children: ReactNode }) => {
                 if (t.kind === 'audio') {
                     t.enabled = !t.enabled
 
-                    setIsLocalTrackMuted(!t.enabled)
+                    // setIsLocalTrackMuted(!t.enabled)
+                    dispatch(setMute({isMuted: !t.enabled}))
                 };
             })
         }
@@ -392,24 +358,15 @@ const RTCStreamProvider = ({ children }: { children: ReactNode }) => {
     const handleLocalSpeaker = () => {
         if (pcConn.current && localStream) {
 
-            InCallManager.setSpeakerphoneOn(!isLocalSpeaker)
-            setIsLocalSpeaker(!isLocalSpeaker)
-            InCallManager.setForceSpeakerphoneOn(!isLocalSpeaker)
+            InCallManager.setSpeakerphoneOn(!isSpeaker)
+            dispatch(setSpeaker({isSpeaker: !isSpeaker}))
+            InCallManager.setForceSpeakerphoneOn(!isSpeaker)
         }
     }
 
     return (
         <RTCStreamContext.Provider
             value={{
-                isLocalTrackMuted,
-                isLocalSpeaker,
-                isCallAnswered,
-                callInProgress,
-                userCallRole,
-                callSessionID,
-                topicID,
-                setCallSessionID,
-                setTopicID,
                 handleCall,
                 handleAnswer,
                 handleEnd,

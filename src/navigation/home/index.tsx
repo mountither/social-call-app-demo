@@ -9,7 +9,7 @@ import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messag
 import { useNavigation } from '@react-navigation/native';
 import CalleeView from '../../screens/call/CalleeView';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCallSessionID, setPeerDetails, TopicCallState, getCallState } from '../../redux/slices/TopicCallSlice';
+import { setCallSessionID, setPeerDetails, TopicCallState, getCallState, setTopicID } from '../../redux/slices/TopicCallSlice';
 import { useRTCStream } from '../../providers/RTCStreamProvider';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
@@ -62,11 +62,6 @@ const HomeNavigator = () => {
 
     const dispatch = useDispatch();
 
-    const state = useSelector((state: TopicCallState) => state);
-
-
-    const { setCallSessionID, setTopicID, callInProgress} = useRTCStream()
-
     const processTopicCallAnswer = async (message: FirebaseMessagingTypes.RemoteMessage) => {
         try {
             const data = message?.data;
@@ -94,8 +89,9 @@ const HomeNavigator = () => {
             }
 
             dispatch(setPeerDetails({ peerName: data?.callerName, peerUID: data?.callerUID }))
-            setCallSessionID(data?.callSessionID)
-            setTopicID(data?.topicID)
+            dispatch(setCallSessionID({callSessionID: data?.callSessionID}))
+            dispatch(setTopicID({topicID: data?.topicID}))
+            
             navigation.navigate("CalleeView" as never)
         }
         catch (error) {

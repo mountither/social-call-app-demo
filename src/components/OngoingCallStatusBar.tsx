@@ -7,14 +7,15 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useNavigation } from '@react-navigation/native';
 import { AnimatePresence, MotiView } from 'moti';
-import { TopicCallState, getCallState } from '../redux/slices/TopicCallSlice';
+import { TopicCallState, getCallState, getMuteState, getUserCallRole } from '../redux/slices/TopicCallSlice';
 import { useRTCStream } from '../providers/RTCStreamProvider';
 
 
 const {width} = Dimensions.get('window');
 
 const OngoingCallStatusBar = () => {
-    const state = useSelector((state: TopicCallState) => state)
+    const state = useSelector((state: TopicCallState) => state);
+
 
     const activeCall = getCallState(state);
     // let activeCall = true
@@ -23,11 +24,13 @@ const OngoingCallStatusBar = () => {
 
     const navigation = useNavigation();
 
+    const isMuted = getMuteState(state);
+
+    const userCallRole = getUserCallRole(state);
+
     const {
-        userCallRole,
         handleLocalMute,
         handleEnd,
-        isLocalTrackMuted
     } = useRTCStream()
 
     const callScreen = (): string | undefined => {
@@ -60,7 +63,7 @@ const OngoingCallStatusBar = () => {
                         opacity: 0,
                         scale: 0,
                     }}
-                    style={tw`flex-row w-full shadow-lg self-center bg-green-400 h-12 mb-2 items-center  justify-between px-3`}>
+                    style={tw`flex-row w-full shadow-lg self-center bg-green-400 h-13 mb-2 items-center  justify-between px-3`}>
                     <Text style={tw`text-sm text-gray-200 font-bold text-center`}>Go back to call</Text>
 
                     <View style={tw`flex-row`}>
@@ -71,7 +74,7 @@ const OngoingCallStatusBar = () => {
                             }}
                         >
                             <View style={tw`self-center`}>
-                                <Icon name="phone-slash" size={15} color={'#c44343'} />
+                                <Icon name="phone-slash" size={20} color={'#c44343'} />
                             </View>
 
                             <Text style={tw`text-xs text-red-500 font-semibold`}>End Call</Text>
@@ -81,7 +84,7 @@ const OngoingCallStatusBar = () => {
                             onPress={handleLocalMute}
                         >
                             <View style={tw`self-center`}>
-                                <Icon name={isLocalTrackMuted ? "microphone-slash" : "microphone"} size={15} color={'gray'} />
+                                <Icon name={isMuted ? "microphone-slash" : "microphone"} size={20} color={'gray'} />
                             </View>
 
                             <Text style={tw`text-xs text-gray-500 font-semibold`}>Mute</Text>

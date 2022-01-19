@@ -9,7 +9,7 @@ import ActiveCallView from '../../components/ActiveCallView';
 import ScreenContainer from '../../components/layouts/ScreenContainer';
 import { functions } from '../../navigation';
 import auth from '@react-native-firebase/auth';
-import { endCall, setPeerDetails, startCall, TopicCallState, getPeerName, getPeerUID } from '../../redux/slices/TopicCallSlice';
+import { endCall, setPeerDetails, startCall, TopicCallState, getPeerName, getPeerUID, getMuteState, getSpeakerState, getIsCallAnswered, getCallState, setTopicID } from '../../redux/slices/TopicCallSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRTCStream } from '../../providers/RTCStreamProvider';
 import { MotiView } from 'moti';
@@ -29,20 +29,20 @@ const CallerView = ({route}: {route :any}) => {
     console.log("RENDERED CALLER VIEW")
 
     const navigation = useNavigation();
+    const dispatch = useDispatch();
 
     const state = useSelector((state: TopicCallState) => state);
 
     const peerUID = getPeerUID(state);
     const peerName = getPeerName(state);
 
+    const activeCall = getCallState(state)
 
-
+    const isMuted = getMuteState(state);
+    const isSpeaker = getSpeakerState(state);
+    const isCallAnswered = getIsCallAnswered(state);
+    
     const {
-        isLocalTrackMuted,
-        isLocalSpeaker,
-        isCallAnswered,
-        callInProgress,
-        setTopicID,
         handleCall,
         handleEnd,
         handleLocalMute,
@@ -52,7 +52,7 @@ const CallerView = ({route}: {route :any}) => {
         try {
             console.log("Proccesing Call session @ CALLER")
 
-            if (callInProgress) return;
+            if (activeCall) return;
 
             //* create a call
             const sessionID = await handleCall()
@@ -65,7 +65,7 @@ const CallerView = ({route}: {route :any}) => {
                 throw Error("The relevant callee/call information must be provided to continue with call.")
             }
 
-            setTopicID(topicID);
+            dispatch(setTopicID({topicID}));
             //* send info via cf => notify callee of session
 
             const sendData = functions.httpsCallable("notifyUserTopicCallAccept");
@@ -122,8 +122,8 @@ const CallerView = ({route}: {route :any}) => {
                         handleEnd={handleEnd}
                         handleLocalMute={handleLocalMute}
                         handleLocalSpeaker={handleLocalSpeaker}
-                        isLocalSpeaker={isLocalSpeaker}
-                        isLocalTrackMuted={isLocalTrackMuted} />
+                        isLocalSpeaker={isSpeaker}
+                        isLocalTrackMuted={isMuted} />
                 </MotiView>
 
             }
