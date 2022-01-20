@@ -9,4 +9,6 @@ This app consists of experimental features used in an another app (TV/Film socia
 * signalling server - firestore
 * push notifications - iOS and android
 * UI Call process flow.
-
+* navigation
+* video scroll snap 
+* youtube player integration
