@@ -13,6 +13,7 @@ import { endCall, setPeerDetails, startCall, TopicCallState, getPeerName, getPee
 import { useDispatch, useSelector } from 'react-redux';
 import { useRTCStream } from '../../providers/RTCStreamProvider';
 import { MotiView } from 'moti';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const STUN_SERVER = ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'];
 
@@ -99,6 +100,9 @@ const CallerView = ({route}: {route :any}) => {
         <View style={tw`flex-1 items-center justify-center`}>
             {(!isCallAnswered) ?
                 <>
+                 <TouchableOpacity onPress={() => navigation.goBack()} style={tw`absolute flex-1 top-10 left-5 z-10`}>
+                <Icon name='arrow-back' size={35} />
+            </TouchableOpacity>
                     <Text style={tw`text-gray-600 text-2xl  mt-10 px-5 text-center`}>
                         <Text>Awaiting a response from</Text>
                         <Text style={tw`font-semibold text-black`}>{"\n"}{peerName}</Text>
@@ -109,7 +113,7 @@ const CallerView = ({route}: {route :any}) => {
                             handleEnd();
                         }}
                         style={tw`rounded-xl p-2 bg-red-400 items-center w-40% self-center mt-10`}>
-                        <Text style={tw`text-lg font-bold text-white`}>Cancel</Text>
+                        <Text style={tw`text-lg font-bold text-white`}>End Call</Text>
                     </TouchableOpacity>
                 </> :
                 <MotiView

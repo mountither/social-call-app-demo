@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useContext, useRef, useState } from 'react'
+import React, { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react'
 import { RTCPeerConnection, MediaStream, RTCPeerConnectionConfiguration } from 'react-native-webrtc';
 import { useNavigation } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
@@ -7,6 +7,7 @@ import InCallManager from 'react-native-incall-manager';
 import auth from '@react-native-firebase/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { endCall, startCall, TopicCallState, getPeerUID, setMute, setSpeaker, getSpeakerState, setIsCallAnswered, setUserCallRole, getUserCallRole, setCallSessionID, getCallSessionID, getTopicID } from '../redux/slices/TopicCallSlice';
+import { AppState, AppStateEvent } from 'react-native';
 
 
 // TODO - add call request amount in a seperate document that can be read effeciently.
@@ -122,14 +123,14 @@ const RTCStreamProvider = ({ children }: { children: ReactNode }) => {
                 };
 
                 await callDoc.set({ offer });
-                dispatch(setUserCallRole({userCallRole: "caller"}))
+                dispatch(setUserCallRole({ userCallRole: "caller" }))
                 //* listener for remote answer
                 callDoc.onSnapshot((snapshot) => {
                     const data = snapshot.data();
                     console.log("Activity @ Caller - Listening to call data")
                     if (!pcConn.current?.remoteDescription && data?.answer) {
 
-                        dispatch(setIsCallAnswered({isCallAnswered: true}));
+                        dispatch(setIsCallAnswered({ isCallAnswered: true }));
 
                         console.log("Activity @ Caller - Found an answer to offer")
                         InCallManager.start({ media: 'audio' });
@@ -160,7 +161,7 @@ const RTCStreamProvider = ({ children }: { children: ReactNode }) => {
                     });
                 });
 
-                dispatch(setCallSessionID({callSessionID: callDoc.id}))
+                dispatch(setCallSessionID({ callSessionID: callDoc.id }))
                 dispatch(startCall())
 
             }
@@ -228,7 +229,7 @@ const RTCStreamProvider = ({ children }: { children: ReactNode }) => {
                     };
 
                     await callDoc.update({ answer });
-                    dispatch(setUserCallRole({userCallRole: "callee"}))
+                    dispatch(setUserCallRole({ userCallRole: "callee" }))
 
 
                     //* listen for any offer changes in collection
@@ -297,14 +298,14 @@ const RTCStreamProvider = ({ children }: { children: ReactNode }) => {
                         },
                     }, { merge: true })
 
-                    //* change call in progress for that user.
-                    await firestore().collection("users_call_state").doc(auth().currentUser?.uid).set({
-                        call_in_progress: false
-                    })
-
                     console.log("Deleted call request")
                 }
             }
+
+            //* change call in progress for that user.
+            await firestore().collection("users_call_state").doc(auth().currentUser?.uid).set({
+                call_in_progress: false
+            })
 
 
             //* delete current call
@@ -349,7 +350,7 @@ const RTCStreamProvider = ({ children }: { children: ReactNode }) => {
                     t.enabled = !t.enabled
 
                     // setIsLocalTrackMuted(!t.enabled)
-                    dispatch(setMute({isMuted: !t.enabled}))
+                    dispatch(setMute({ isMuted: !t.enabled }))
                 };
             })
         }
@@ -359,7 +360,7 @@ const RTCStreamProvider = ({ children }: { children: ReactNode }) => {
         if (pcConn.current && localStream) {
 
             InCallManager.setSpeakerphoneOn(!isSpeaker)
-            dispatch(setSpeaker({isSpeaker: !isSpeaker}))
+            dispatch(setSpeaker({ isSpeaker: !isSpeaker }))
             InCallManager.setForceSpeakerphoneOn(!isSpeaker)
         }
     }

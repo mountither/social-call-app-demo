@@ -7,9 +7,9 @@ import '@react-native-firebase/functions';
 import AuthStack from './authentication/AuthStack';
 import tw from 'twrnc';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
-import HomeNavigator from './home';
 import messaging from '@react-native-firebase/messaging';
 import RTCStreamProvider from '../providers/RTCStreamProvider';
+import MainNavigator from './app';
 
 export const functions = firebase.app().functions('australia-southeast1');
 
@@ -97,7 +97,7 @@ const AppNavigation = () => {
             <RTCStreamProvider>
                 {
                     user ?
-                        <HomeNavigator />
+                        <MainNavigator />
                         :
                         <AuthStack />
 

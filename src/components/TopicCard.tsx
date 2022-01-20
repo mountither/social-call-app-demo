@@ -127,7 +127,7 @@ const TopicCard = ({ topic }: TopicCardProps) => {
     }
 
     return (
-        <View style={tw`relative px-10 py-9 mt-2 flex flex-col items-center ${auth().currentUser?.uid != topic.author_uid ? 'bg-gray-100' : 'bg-green-100'} w-${width}px self-center`}>
+        <View style={tw`relative px-10 py-9 mt-2 flex flex-col items-center ${auth().currentUser?.uid != topic.author_uid ? 'bg-white' : 'bg-green-100'} w-${width}px self-center`}>
             <View style={tw`absolute top-2 right-2`}>
                 <Text style={tw`text-xs text-gray-500`}>{new Date(topic.date_published.seconds * 1000).toDateString() + " " + new Date(topic.date_published.seconds * 1000).toTimeString().substring(0, 5)}</Text>
             </View>
