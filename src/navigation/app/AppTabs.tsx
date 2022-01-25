@@ -12,6 +12,7 @@ import { View, Text, Dimensions } from 'react-native';
 import { MotiView } from 'moti';
 import { MotiPressable } from 'moti/interactions';
 import Videos from '../../screens/videos/index';
+import tw from 'twrnc';
 
 const { width } = Dimensions.get('window')
 const Tabs = createBottomTabNavigator();
@@ -39,6 +40,7 @@ const AppTabs = () => {
         <Tabs.Navigator
             initialRouteName="Home"
             screenOptions={({ route }) => ({
+                tabBarStyle: tw`bg-[#F1ECE0]`,
                 tabBarActiveTintColor: "#4f4f4f",
                 tabBarInactiveTintColor: "#a6a6a6",
                 headerShown: false,
