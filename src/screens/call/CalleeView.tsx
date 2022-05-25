@@ -1,19 +1,13 @@
-import RNCallKeep from 'react-native-callkeep';
-import InCallManager from 'react-native-incall-manager';
-import { RouteProp, useNavigation } from '@react-navigation/native';
-import React, { useEffect, useRef, useState } from 'react'
-import { NativeModules, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import tw from 'twrnc';
-import firestore from '@react-native-firebase/firestore';
-import { MediaStream, RTCPeerConnection, mediaDevices, RTCPeerConnectionConfiguration, RTCOfferOptions, RTCSessionDescription, RTCIceCandidate, RTCIceCandidateType } from 'react-native-webrtc';
-import ActiveCallView from '../../components/ActiveCallView';
-import ScreenContainer from '../../components/layouts/ScreenContainer';
-import { functions } from '../../navigation';
 import auth from '@react-native-firebase/auth';
-import { RTCConfig } from './CallerView';
+import firestore from '@react-native-firebase/firestore';
+import { useNavigation } from '@react-navigation/native';
+import React, { useEffect } from 'react';
+import { NativeModules, Platform, View } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { endCall, setPeerDetails, startCall, TopicCallState, getMuteState, getSpeakerState, getCallState, getCallSessionID } from '../../redux/slices/TopicCallSlice';
+import tw from 'twrnc';
+import ActiveCallView from '../../components/ActiveCallView';
 import { useRTCStream } from '../../providers/RTCStreamProvider';
+import { getCallSessionID, getCallState, getMuteState, getSpeakerState, startCall, TopicCallState } from '../../redux/slices/TopicCallSlice';
 
 const CalleeView = () => {
     console.log("RENDERED CALLEE VIEW")

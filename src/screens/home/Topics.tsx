@@ -8,34 +8,22 @@
  * @format
  */
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import {
-    ScrollView,
-    View,
-    Text,
-    NativeModules,
-    Platform,
-} from 'react-native';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
-import { mediaDevices, MediaStream, RTCPeerConnection, RTCView, RTCOfferOptions, RTCSessionDescription, RTCIceCandidate, RTCIceCandidateType, RTCPeerConnectionConfiguration, RTCSessionDescriptionType } from 'react-native-webrtc';
-import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
-import tw from 'twrnc';
-import RNCallKeep, { IOptions } from 'react-native-callkeep';
-import InCallManager from 'react-native-incall-manager';
-import TopicCard from '../../components/TopicCard';
 import auth from '@react-native-firebase/auth';
+import firestore, { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
+import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import {
+    Text, View
+} from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import SimpleIcon from 'react-native-vector-icons/SimpleLineIcons';
-
-
-import { useNavigation } from '@react-navigation/native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import ScreenContainer from '../../components/layouts/ScrollScreenContainer';
+import tw from 'twrnc';
 import ScrollScreenContainer from '../../components/layouts/ScrollScreenContainer';
-import { MotiAnimationProp, MotiView } from 'moti';
-import { MotiPressable } from 'moti/interactions'
+import TopicCard from '../../components/TopicCard';
+
+
+
 
 
 export type Topic = {
