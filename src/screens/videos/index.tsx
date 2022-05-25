@@ -4,20 +4,16 @@ import {
     Text,
     Dimensions,
     TouchableOpacity,
-    Button,
-    Alert,
-    Image,
     NativeScrollEvent,
     FlatList,
     ViewabilityConfig,
+    ViewToken,
+    Platform,
 } from 'react-native';
-import ScrollScreenContainer from '../../components/layouts/ScrollScreenContainer';
 import tw from 'twrnc';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import YTPlayer from '../../components/YTPlayer';
-import FlatScrollScreenContainer from '../../components/layouts/FlatScrollScreenContainer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
 
 const options = {
     enableVibrateFallback: true,
@@ -31,7 +27,6 @@ const viewabilityConfig: ViewabilityConfig = {
     // viewAreaCoveragePercentThreshold: 95,
     itemVisiblePercentThreshold: 90
 }
-
 
 export type Film = {
     title: string,
@@ -94,75 +89,57 @@ const isCloseToBottom = (props: NativeScrollEvent) => {
 const Videos = () => {
     const [playVideoID, setPlayVideoID] = useState<string | undefined>(undefined);
 
-    const navigation = useNavigation();
+    const [loadingVideos, setLoadingVideos] = useState<boolean>(Platform.OS === 'android' ?  false : true);
 
 
-    const [loadingVideos, setLoadingVideos] = useState<boolean>(true);
-
-    // const onStateChange = useCallback((state) => {
-
-    //     if (state === "ended") {
-    //         setPlaying(false);
-    //         Alert.alert("video has finished playing!");
-    //     }
-    // }, []);
     const insets = useSafeAreaInsets();
 
-    const onViewableItemsChanged = useCallback(({ viewableItems, changed }: { viewableItems: any, changed: any }) => {
+    const onViewableItemsChanged = useCallback(({ viewableItems, changed }: { viewableItems: ViewToken[], changed: ViewToken[] }) => {
         //* get video id here and set as playable video
         if (viewableItems[0]?.item) {
-            console.log("Visible video ID ", viewableItems[0].item.videoID);
+            // console.log("Visible video ID ", viewableItems[0].item.videoID);
             setPlayVideoID(viewableItems[0].item.videoID);
-
         }
 
-        console.log("Changed in this iteration", changed);
+        // console.log("Changed in this iteration", changed);
     }, []);
 
-    // console.log(loadingVideos);
-    // useEffect(() => {
-    //     if (films[0].videoID && !loadingVideos) {
-    //         setPlayVideoID(films[0].videoID);
-    //     }
-    // }, [loadingVideos])
     return (
         <>
             <FlatList
                 style={tw`mt-${insets.top}px`}
                 contentContainerStyle={tw` px-5`}
+                ItemSeparatorComponent={()=>(
+                    <View style={tw`h-0.5 bg-gray-300 rounded-xl w-${width *0.2} self-center mb-5 ${loadingVideos ? 'hidden' : ''
+                }`} />
+
+                )}
                 renderItem={({ item }: { item: Film }) => {
                     const film = item;
                     return (
                         <>
+                            <View
+                                key={film.title}
+                                style={tw`w-${width}px self-center h-${450}px ${loadingVideos ? 'hidden' : ''
+                                    }`}>
+                                <View style={tw`flex-row items-center justify-between px-2`}>
 
-                        <View
-                            key={film.title}
-                            style={tw`h-${450}px w-${width}px self-center ${loadingVideos ? 'hidden' : ''
-                                }`}>
-                            <View style={tw`flex-row items-center justify-between px-2`}>
+                                    <View style={tw`flex-col w-${width * 0.15}`}>
+                                        <Text style={tw`text-lg font-bold `}>{film.title}</Text>
+                                        <Text style={tw`text-sm text-gray-500 mt-1`}>{film.year}</Text>
+                                    </View>
+                                    <TouchableOpacity
+                                        style={tw`rounded-xl bg-black px-4 py-2`}
+                                        activeOpacity={0.7}
+                                    >
+                                        <Text style={tw`text-white font-bold text-sm`}>Discover</Text>
+                                    </TouchableOpacity>
 
-                                <View style={tw`flex-col w-${width * 0.15}`}>
-                                    <Text style={tw`text-xl font-bold `}>{film.title}</Text>
-                                    <Text style={tw`text-lg text-gray-500 mt-1`}>{film.year}</Text>
-                                    {/* <Text style={tw`text-sm text-gray-600 mt-2`}>
-                            {film.desc}
-                            <TouchableOpacity>
-                                <Text style={tw`text-blue-700 text-sm`}>read more</Text>
-                            </TouchableOpacity>
-                        </Text> */}
                                 </View>
-                                <TouchableOpacity
-                                    style={tw`rounded-xl bg-red-400 px-4 py-3`}
-                                >
-                                    <Text style={tw`text-white font-bold text-sm`}>Discover</Text>
-                                </TouchableOpacity>
+
+                                <YTPlayer setLoading={setLoadingVideos} id={film.videoID} idToPlay={playVideoID} />
 
                             </View>
-
-                            <YTPlayer setLoading={setLoadingVideos} id={film.videoID} idToPlay={playVideoID} />
-
-                        </View>
-                            <View style={tw`border-white border-2 w-${width * 0.2}  self-center  mb-5`} />
 
                         </>
                     )
@@ -181,7 +158,7 @@ const Videos = () => {
                     </>
                 )}
                 decelerationRate="fast"
-                snapToInterval={450 + HEADER_HEIGHT + 10}
+                snapToInterval={450 + HEADER_HEIGHT}
                 disableIntervalMomentum
                 snapToAlignment='center'
                 scrollEnabled={!loadingVideos}
