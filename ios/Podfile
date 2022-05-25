@@ -13,12 +13,12 @@ target 'CallApp' do
   )
   
   
+
   target 'CallAppTests' do
     inherit! :complete
     # Pods for testing
   end
 
-  pod 'RNCallKeep', :path => '../node_modules/react-native-callkeep'
   
   # Enables Flipper.
   #

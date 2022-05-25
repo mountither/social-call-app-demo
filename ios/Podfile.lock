@@ -801,8 +801,6 @@ PODS:
     - React-perflogger (= 0.66.4)
   - ReactNativeIncallManager (3.3.0):
     - React
-  - RNCallKeep (4.3.1):
-    - React
   - RNFBApp (14.2.2):
     - Firebase/CoreOnly (= 8.10.0)
     - React-Core
@@ -920,7 +918,6 @@ DEPENDENCIES:
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeIncallManager (from `../node_modules/react-native-incall-manager`)
-  - RNCallKeep (from `../node_modules/react-native-callkeep`)
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
   - "RNFBFirestore (from `../node_modules/@react-native-firebase/firestore`)"
@@ -1035,8 +1032,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   ReactNativeIncallManager:
     :path: "../node_modules/react-native-incall-manager"
-  RNCallKeep:
-    :path: "../node_modules/react-native-callkeep"
   RNFBApp:
     :path: "../node_modules/@react-native-firebase/app"
   RNFBAuth:
@@ -1125,7 +1120,6 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: dec32ee6f2e2a26e13e58152271535fadff5455a
   ReactCommon: 57b69f6383eafcbd7da625bfa6003810332313c4
   ReactNativeIncallManager: a840ef75640518065742a893e6c6ff98ee820039
-  RNCallKeep: 3ac23a8074aa4b25901a437ee4c6fcbbd7509bfd
   RNFBApp: 78d0446e8b28dc30616c134a9e4d8d4b01f9f966
   RNFBAuth: ac807e2ed1c08f1157bd866ede64faa706eab303
   RNFBFirestore: 0b11664ee7aef061378ad3a3acc48d0bc31d821a
@@ -1139,6 +1133,6 @@ SPEC CHECKSUMS:
   Yoga: e7dc4e71caba6472ff48ad7d234389b91dadc280
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 00246253e3247613b91039b71cf03c04352649ea
+PODFILE CHECKSUM: caa26eefbd6e2c93ab1bc6e6dc79531675873634
 
 COCOAPODS: 1.11.2

@@ -215,8 +215,6 @@ dependencies {
         exclude group:'com.facebook.flipper'
     }
 
-    compile project(':react-native-callkeep')
-
     compile(project(':react-native-incall-manager'))
 
     if (enableHermes) {
