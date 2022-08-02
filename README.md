@@ -1,6 +1,6 @@
 # Call Social app - demo
 
-This app consists of experimental features used in an another app (TV/Film social app - TBD App name)
+This app consists of experimental features
 
 ## Features
 
