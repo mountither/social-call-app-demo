@@ -1,7 +1,3 @@
-# Call Social app - demo
-
-This app consists of experimental features used in an another app (TV/Film social app - TBD App name)
-
 ## Features
 
 * webrtc voice call
@@ -12,3 +8,19 @@ This app consists of experimental features used in an another app (TV/Film socia
 * navigation
 * video scroll snap 
 * youtube player integration
+
+
+## Video Demonstrations
+
+### Call requester (left) and call accepter (right)
+
+
+
+https://user-images.githubusercontent.com/53046782/183569362-2ca79b2b-0f8b-48f7-9e9a-a5fe98c41488.mp4
+
+
+#### Android
+
+
+https://user-images.githubusercontent.com/53046782/183574352-1ac8ad67-d0c0-47f7-8cc1-53ce51b2d157.mov
+
