@@ -1,18 +1,16 @@
-import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
-import React, { useEffect } from 'react'
-import { Alert, Animated, Dimensions } from 'react-native';
-import CreateTopic from '../../screens/home/CreateTopic';
-import RequestedTopicCalls from '../../screens/home/RequestedTopicCalls';
-import HomeStack from './HomeStack';
-import CallerView from '../../screens/call/CallerView';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 import { useNavigation } from '@react-navigation/native';
-import CalleeView from '../../screens/call/CalleeView';
+import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
+import React, { useEffect } from 'react';
+import { Dimensions } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCallSessionID, setPeerDetails, TopicCallState, getCallState, setTopicID } from '../../redux/slices/TopicCallSlice';
-import { useRTCStream } from '../../providers/RTCStreamProvider';
-import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
+import { getCallState, setCallSessionID, setPeerDetails, setTopicID, TopicCallState } from '../../redux/slices/TopicCallSlice';
+import CalleeView from '../../screens/call/CalleeView';
+import CallerView from '../../screens/call/CallerView';
+import CreateTopic from '../../screens/home/CreateTopic';
+import RequestedTopicCalls from '../../screens/home/RequestedTopicCalls';
 import AppTabs from './AppTabs';
 
 const { height } = Dimensions.get("window")
@@ -146,6 +144,7 @@ const MainNavigator = () => {
     }, []);
 
     return (
+
         <Navigator
             initialRouteName='Main'
             screenOptions={{

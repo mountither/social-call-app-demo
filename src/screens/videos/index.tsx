@@ -14,6 +14,7 @@ import tw from 'twrnc';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import YTPlayer from '../../components/YTPlayer';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import OngoingCallStatusBar from '../../components/OngoingCallStatusBar';
 
 const options = {
     enableVibrateFallback: true,
@@ -89,7 +90,7 @@ const isCloseToBottom = (props: NativeScrollEvent) => {
 const Videos = () => {
     const [playVideoID, setPlayVideoID] = useState<string | undefined>(undefined);
 
-    const [loadingVideos, setLoadingVideos] = useState<boolean>(Platform.OS === 'android' ?  false : true);
+    const [loadingVideos, setLoadingVideos] = useState<boolean>(Platform.OS === 'android' ? false : true);
 
 
     const insets = useSafeAreaInsets();
@@ -106,12 +107,15 @@ const Videos = () => {
 
     return (
         <>
+            <View style={tw`mt-${insets.top}px`}>
+                <OngoingCallStatusBar />
+            </View>
+
             <FlatList
-                style={tw`mt-${insets.top}px`}
-                contentContainerStyle={tw` px-5`}
-                ItemSeparatorComponent={()=>(
-                    <View style={tw`h-0.5 bg-gray-300 rounded-xl w-${width *0.2} self-center mb-5 ${loadingVideos ? 'hidden' : ''
-                }`} />
+                contentContainerStyle={tw`px-5 mt-5`}
+                ItemSeparatorComponent={() => (
+                    <View style={tw`h-0.5 bg-gray-300 rounded-xl w-${width * 0.2} self-center mb-5 ${loadingVideos ? 'hidden' : ''
+                        }`} />
 
                 )}
                 renderItem={({ item }: { item: Film }) => {

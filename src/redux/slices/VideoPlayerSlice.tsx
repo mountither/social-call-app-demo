@@ -4,10 +4,12 @@ type VideoPlayerSliceState = {
     isMuted: boolean,
 }
 
+//* Initial State
 const init : VideoPlayerSliceState = {
     isMuted: true,
 };
 
+//* reducers (mutations)
 export const VideoPlayerSlice = createSlice({
     name: 'videoPlayer',
     initialState: init,
@@ -22,6 +24,7 @@ export const VideoPlayerSlice = createSlice({
     },
 });
 
+//* actions
 export const {
     triggerMute,
 } = VideoPlayerSlice.actions;
@@ -29,7 +32,8 @@ export const {
 export type VideoPlayerState = {
     videoPlayer: VideoPlayerSliceState
 }
-
+//* getters
 export const getVideoMuteState = (state : VideoPlayerState) => state.videoPlayer.isMuted;
 
+//* reducer - register this @ store
 export default VideoPlayerSlice.reducer;

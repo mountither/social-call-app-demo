@@ -63,7 +63,7 @@ const OngoingCallStatusBar = () => {
                         opacity: 0,
                         scale: 0,
                     }}
-                    style={tw`flex-row w-full shadow-lg self-center bg-green-400 h-13 mb-2 items-center  justify-between px-3`}>
+                    style={tw`flex-row w-full shadow-lg self-center bg-green-400 h-13 mb-0 items-center  justify-between px-3`}>
                     <Text style={tw`text-sm text-gray-200 font-bold text-center`}>Go back to call</Text>
 
                     <View style={tw`flex-row`}>

@@ -1,13 +1,15 @@
 import React from 'react'
 import { Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import tw from 'twrnc';
 import { useNavigation } from '@react-navigation/native';
 import ScreenContainer from './layouts/ScreenContainer';
 import { useSelector } from 'react-redux';
 import { getPeerName, TopicCallState } from '../redux/slices/TopicCallSlice';
 import { MotiView } from 'moti';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
 
 type ActiveCallViewProps = {
     handleLocalSpeaker: () => void,
@@ -28,7 +30,7 @@ const ActiveCallView = ({ handleEnd, handleLocalMute, handleLocalSpeaker, isLoca
     return (
         <>
             <TouchableOpacity onPress={() => navigation.goBack()} containerStyle={tw`absolute flex-1 top-10 left-5 z-10`}>
-                <Icon name='arrow-back' size={35} />
+                <MaterialIcons name='arrow-back' size={35} />
             </TouchableOpacity>
             <View
                 style={tw`flex-1 items-center justify-center`}>
@@ -39,26 +41,27 @@ const ActiveCallView = ({ handleEnd, handleLocalMute, handleLocalSpeaker, isLoca
                 <View style={tw`absolute bottom-10 flex-row justify-between`}>
                     <TouchableOpacity
                         onPress={handleLocalSpeaker}
-                        style={tw`rounded-lg bg-indigo-600 p-3 mr-10`}
+                        style={tw`flex-col items-center rounded-lg bg-indigo-600 p-3 mr-10 ${isLocalSpeaker? '': 'bg-opacity-30'}`}
                     >
-
+                        <FontAwesome5 name="volume-up" color="white" size={20} style={tw`mb-2`}/>
                         <Text style={tw`text-xs text-white`}>{isLocalSpeaker ? 'Speaker on' : "Speaker off"}</Text>
 
                     </TouchableOpacity>
 
                     <TouchableOpacity
                         onPress={handleLocalMute}
-                        style={tw`rounded-lg bg-gray-600 p-3 mr-10`}
-                    >
-
+                        style={tw`flex-col items-center rounded-lg bg-gray-600 p-3 mr-10`}
+                    >   
+                        <FontAwesome5 name={isLocalTrackMuted ? "microphone-slash" : "microphone"} color="white" size={20} style={tw`mb-2`}/>
                         <Text style={tw`text-xs text-white`}>{isLocalTrackMuted ? 'Muted' : "Mute"}</Text>
 
                     </TouchableOpacity>
 
                     <TouchableOpacity
                         onPress={handleEnd}
-                        style={tw`rounded-lg bg-red-600 p-3 `}
+                        style={tw`flex-col items-center rounded-lg bg-red-600 p-3 `}
                     >
+                        <FontAwesome5 name="phone-slash" size={20} color={'white'} style={tw`mb-2`}/>
                         <Text style={tw`text-xs text-white`}>End</Text>
                     </TouchableOpacity>
                 </View>
